@@ -1,12 +1,14 @@
 from collections import defaultdict
 from decimal import Decimal
 import re
-from app.settings import TEMP_MAX_AGE
-
-WARM_LIMIT = Decimal('4')
+from app.rules import current as current_rules
 
 
-def normalize(rows):
+def normalize(rows, rules=None):
+    if rules is None:
+        rules = current_rules()
+    limit = Decimal(rules['warm_limit'])
+    max_age = rules['temp_max_age']
     grouped = defaultdict(lambda: defaultdict(list))
     isolated = []
     for row in rows:
@@ -24,6 +26,6 @@ def normalize(rows):
             if len(values) != 1:
                 isolated.append(dict(code='TEMP_CONFLICT', door=door, time=time, lines=lines))
             value = next(iter(values)) if len(values) == 1 else None
-            history[door].append(dict(time=time, end=time + TEMP_MAX_AGE, value=str(value) if value is not None else None,
-                                      warm=value > WARM_LIMIT if value is not None else None, lines=lines))
+            history[door].append(dict(time=time, end=time + max_age, value=str(value) if value is not None else None,
+                                      warm=value > limit if value is not None else None, lines=lines))
     return history, isolated

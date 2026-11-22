@@ -1,14 +1,16 @@
 from collections import Counter
 from app.modules.registry.versions import at
+from app.rules import current as current_rules
 from .doors import signals
 from .temperature import normalize
 
 KINDS = ('closed', 'warm', 'cooled', 'missing_temp', 'missing_slot', 'missing_door')
 
 
-def exposure(periods, registry, doors, temperatures):
-    doors, door_isolation = signals(doors)
-    temps, temp_isolation = normalize(temperatures)
+def exposure(periods, registry, doors, temperatures, rules=None):
+    rules = rules or current_rules()
+    doors, door_isolation = signals(doors, rules['min_door_pulse'])
+    temps, temp_isolation = normalize(temperatures, rules)
     rows = []
     for period in periods:
         rows.extend(slice_period(period, registry['versions'], doors, temps))

@@ -6,7 +6,7 @@ from .modules.capacity.service import reconcile
 from .window import window
 
 
-def review(files, until=None):
+def review(files, until=None, rules=None):
     if until == 'intake':
         return intake(files)
     if until == 'registry':
@@ -17,7 +17,7 @@ def review(files, until=None):
     custody = replay(raw['tables']['moves'], locations, start, end)
     if until == 'custody':
         return custody
-    air = exposure(custody['periods'], locations, raw['tables']['doors'], raw['tables']['temperatures'])
+    air = exposure(custody['periods'], locations, raw['tables']['doors'], raw['tables']['temperatures'], rules)
     if until == 'exposure':
         return air
     stock = reconcile(locations, custody, air, end)

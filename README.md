@@ -9,12 +9,15 @@
 - 默认展示港区临检样例。选择泳道上的 F03，查看 X9 缺证的 15 分钟及先后调位的原行。切换净样例可以对比闭门下的暴露分类。
 - 查验占位核对 F01 迟补封条与撤销的顺序。余量对账查看普通占用、查验冻结、空余和待定位件数。
 - 归档后可回到批次留档复算，并在冷库证据下载原件、规则版本、逐阶段结论和行证。
+- 承运赔付按货批签发超温凭证：证据只含该货批的在库时段、自有动作、占用槽位版本及相关门的门态与温度行，不泄露同门别家货批。租户下载后可独立核验，漏段、篡改、伪造都会被检出。
 
 ## 输入与接口
 
 `POST /api/receipts` 传入 `{"sample":"dirty"}` 或 `{"sample":"clean"}`。自有原件需要 `moves`、`slots`、`doors`、`temperatures`、`lots`、`window` 六个文本字段，前五项为 CSV，最后一项为 JSON 文本。
 
 `GET /api/observe/<view>` 支持 `intake`、`registry`、`custody`、`exposure`、`capacity`，参数 `sample` 选择样例，`receipt` 查询归档。`GET /api/receipts/<id>` 查看归档，`POST /api/receipts/<id>/refresh` 复算，`GET /api/certificate/<id>/export` 下载证据。
+
+`POST /api/receipts/<id>/vouchers` 传入 `{"lot":"F03"}` 签发该货批的超温凭证，重试返回同一凭证不新增。`GET /api/receipts/<id>/vouchers` 列出归档下已签发凭证。`GET /api/vouchers/<id>/export` 下载凭证，`GET /api/vouchers/<id>/verify` 复核已签发凭证，`POST /api/vouchers/verify` 传入凭证 JSON 独立核验。
 
 [数据定义](docs/DATA-DICTIONARY.md) · [深度登记](docs/DEPTH.md) · [序列复算](docs/SHIFT-EXAMPLE.md)
 

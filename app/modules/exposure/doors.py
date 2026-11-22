@@ -1,8 +1,10 @@
 from collections import defaultdict
-from app.settings import MIN_DOOR_PULSE
+from app.rules import current as current_rules
 
 
-def signals(rows):
+def signals(rows, pulse=None):
+    if pulse is None:
+        pulse = current_rules()['min_door_pulse']
     grouped = defaultdict(lambda: defaultdict(list))
     for row in rows:
         grouped[row['door']][row['time']].append(row)
@@ -22,9 +24,9 @@ def signals(rows):
             if stable and stable[-1]['signal'] == row['signal']:
                 continue
             if (len(stable) >= 2 and stable[-2]['signal'] == row['signal'] and row['signal'] is not None and
-                    stable[-1]['signal'] is not None and row['time'] - stable[-1]['time'] < MIN_DOOR_PULSE):
-                pulse = stable.pop()
-                isolated.append(dict(code='DOOR_BOUNCE', door=door, time=pulse['time'], lines=pulse['lines'] + row['lines']))
+                    stable[-1]['signal'] is not None and row['time'] - stable[-1]['time'] < pulse):
+                bounce = stable.pop()
+                isolated.append(dict(code='DOOR_BOUNCE', door=door, time=bounce['time'], lines=bounce['lines'] + row['lines']))
             else:
                 stable.append(row)
         history[door] = stable

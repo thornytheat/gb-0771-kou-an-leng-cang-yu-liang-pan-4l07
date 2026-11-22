@@ -11,6 +11,7 @@
 | M5 件数和占位对账 | 核对时间与收盘库存守恒 | `/view/capacity` `/api/observe/capacity` | `app/modules/capacity/service.py` | `tests/test_capacity.py` |
 | M6 批次留档复跑 | 归档原件并复算 | `/view/history` `POST /api/receipts` | `app/modules/history/service.py` `app/modules/history/storage.py` | `tests/test_history.py` |
 | M7 冷库证据签发 | 校验摘要并下载原件及依据 | `/view/certificate` `/api/certificate/<key>/export` | `app/modules/certificate/service.py` | `tests/test_certificate.py` |
+| M8 租户超温凭证 | 按货批签发、下载并独立核验超温证据 | `POST /api/receipts/<key>/vouchers` `/api/vouchers/<key>/export` `/api/vouchers/verify` | `app/modules/voucher/service.py` `app/modules/voucher/storage.py` `app/rules.py` | `tests/test_voucher.py` |
 
 ## 陷阱登记
 
